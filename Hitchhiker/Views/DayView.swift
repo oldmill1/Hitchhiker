@@ -128,15 +128,15 @@ struct DayView: View {
         }
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if timeRemaining > 0 {
+            if timeRemaining > 1 {
                 timeRemaining -= 1
 
-                if !isInPause {
-                    if timeRemaining <= 5 && timeRemaining > 0 {
-                        beep()
-                    }
+                if !isInPause && timeRemaining <= 5 {
+                    beep()
                 }
+
             } else {
+                // Skip displaying 0
                 if !isInPause {
                     doubleBeep()
                 }
@@ -144,6 +144,7 @@ struct DayView: View {
             }
         }
     }
+
 
     func stopTimer() {
         timer?.invalidate()
@@ -195,7 +196,11 @@ struct DayView: View {
 
     func doubleBeep() {
         AudioServicesPlaySystemSound(1052)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            AudioServicesPlaySystemSound(1052)
+        }
     }
+
 }
 
 #Preview {
