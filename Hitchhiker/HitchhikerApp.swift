@@ -1,9 +1,4 @@
-//
-//  HitchhikerApp.swift
-//  Hitchhiker
-//
-//  Created by Ankur Taxali on 2025-05-03.
-//
+// HitchhikerApp.swift
 
 import SwiftUI
 
@@ -11,7 +6,16 @@ import SwiftUI
 struct HitchhikerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomepageView()
         }
     }
 }
+
+#if DEBUG
+struct HitchhikerApp_Previews: PreviewProvider {
+    static var previews: some View {
+        HomepageView()
+    }
+}
+#endif
+
