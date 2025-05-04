@@ -11,13 +11,17 @@ struct DayView: View {
 
     var body: some View {
         ZStack {
-            // Gradient background
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.8), Color.green.opacity(0.8)]),
+                gradient: Gradient(colors: [
+                    Color(white: 0.3), // dark gray
+                    Color(white: 0.5), // mid gray
+                    Color(white: 0.4)  // soft transition
+                ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
+
 
             VStack(spacing: 0) {
                 // Play/Pause Button
@@ -34,17 +38,28 @@ struct DayView: View {
                         stopTimer()
                     }
                 }) {
-                    Text(isPlaying ? "Pause" : "Play")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isPlaying ? Color.red : Color.green)
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill") // ▶ or ❚❚
+                        .font(.system(size: 28, weight: .bold))
+                        .frame(width: 64, height: 64)
+                        .background(
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.gray.opacity(0.6), Color.black.opacity(0.8)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
                         .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                        .padding(.top)
-                        .padding(.bottom, 12)
                 }
+                .padding(.top, 16)
+
 
                 // Album Art Placeholder
                 RoundedRectangle(cornerRadius: 12)
