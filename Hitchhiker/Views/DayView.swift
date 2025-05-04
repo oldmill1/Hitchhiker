@@ -160,8 +160,11 @@ struct DayView: View {
         }
 
         if isInPause {
-            // After pause, either next movement or repeat/set
+            // Pause just ended → begin movement
             isInPause = false
+
+            // Play start double beep
+            doubleBeep()
 
             if currentMovementIndex + 1 < set.movements.count {
                 currentMovementIndex += 1
@@ -177,7 +180,7 @@ struct DayView: View {
             }
 
         } else {
-            // Finished movement → enter pause
+            // Finished movement → begin pause
             isInPause = true
         }
 
@@ -187,6 +190,7 @@ struct DayView: View {
             startTimer()
         }
     }
+
 
     // MARK: - Sounds
 
