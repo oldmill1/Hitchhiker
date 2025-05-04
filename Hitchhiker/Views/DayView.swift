@@ -10,74 +10,87 @@ struct DayView: View {
     @State private var timer: Timer? = nil
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Play/Pause Button
-            Button(action: {
-                isPlaying.toggle()
+        ZStack {
+            // Gradient background
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.8), Color.green.opacity(0.8)]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-                if isPlaying {
-                    if currentMovementIndex == nil {
-                        currentMovementIndex = 0
-                        timeRemaining = 30
+            VStack(spacing: 0) {
+                // Play/Pause Button
+                Button(action: {
+                    isPlaying.toggle()
+
+                    if isPlaying {
+                        if currentMovementIndex == nil {
+                            currentMovementIndex = 0
+                            timeRemaining = 30
+                        }
+                        startTimer()
+                    } else {
+                        stopTimer()
                     }
-                    startTimer()
-                } else {
-                    stopTimer()
+                }) {
+                    Text(isPlaying ? "Pause" : "Play")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(isPlaying ? Color.red : Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                        .padding(.top)
+                        .padding(.bottom, 12)
                 }
-            }) {
-                Text(isPlaying ? "Pause" : "Play")
-                    .font(.headline)
+
+                // Album Art Placeholder
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray5))
+                    .aspectRatio(1, contentMode: .fit)
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(isPlaying ? Color.red : Color.green)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+                    .padding(.top, 8)
+
+                // Current Movement Label
+                Text(currentMovementIndex != nil ? movements[currentMovementIndex!].name : "Movement Info")
+                    .font(.title2)
                     .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 12)
-            }
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 8)
 
-            // Album Art Placeholder
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray5))
-                .aspectRatio(1, contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
-                .padding(.top, 8)
+                // Countdown Timer
+                Text("\(timeRemaining)")
+                    .font(.system(size: 72, weight: .light))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 16)
 
-            // Current Movement Label
-            Text(currentMovementIndex != nil ? movements[currentMovementIndex!].name : "Movement Info")
-                .font(.title2)
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 8)
-
-            // Countdown Timer
-            Text("\(timeRemaining)")
-                .font(.system(size: 72, weight: .light))
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 16)
-
-            // Movement List
-            List {
-                Section(header: Text(day.capitalized).font(.largeTitle)) {
-                    ForEach(movements.indices, id: \.self) { index in
-                        HStack {
-                            Text(movements[index].name)
-                            Spacer()
-                            if currentMovementIndex == index {
-                                Circle()
-                                    .fill(Color.green)
-                                    .frame(width: 10, height: 10)
+                // Movement List
+                List {
+                    Section(header: Text(day.capitalized).font(.largeTitle)) {
+                        ForEach(movements.indices, id: \.self) { index in
+                            HStack {
+                                Text(movements[index].name)
+                                Spacer()
+                                if currentMovementIndex == index {
+                                    Circle()
+                                        .fill(Color.green)
+                                        .frame(width: 10, height: 10)
+                                }
                             }
                         }
                     }
                 }
+                .scrollContentBackground(.hidden) // 👈 hides list background
+                .background(Color.clear)          // 👈 makes sure background is transparent
+                .listStyle(.insetGrouped)
+
             }
-            .listStyle(.insetGrouped)
         }
     }
 
