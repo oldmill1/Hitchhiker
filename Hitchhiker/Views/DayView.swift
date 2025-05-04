@@ -41,10 +41,11 @@ struct DayView: View {
 
             VStack(spacing: 0) {
                 // Album Art Placeholder
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray5))
+                Image("headTurnLeftRight")
+                    .resizable()
                     .aspectRatio(1, contentMode: .fit)
                     .frame(maxWidth: .infinity)
+                    .cornerRadius(12)
                     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
                     .padding(.top, 8)
 
