@@ -10,7 +10,7 @@ struct DayView: View {
     @State private var currentMovementIndex: Int = 0
     @State private var currentSetRepeat: Int = 1
     @State private var isInPause: Bool = false
-    @State private var timeRemaining: Int = 30
+    @State private var timeRemaining: Int = 0
     @State private var timer: Timer? = nil
     
     @State private var expandedSections: Set<MovementSet.ID> = []
@@ -70,10 +70,15 @@ struct DayView: View {
                     isPlaying.toggle()
 
                     if isPlaying {
+                        // If it's the first time starting, initialize the timer properly
+                        if timeRemaining == 0, let set = currentSet {
+                            timeRemaining = isInPause ? set.pauseBetween : set.duration
+                        }
                         startTimer()
                     } else {
                         stopTimer()
                     }
+
                 }) {
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 28, weight: .bold))
@@ -115,7 +120,7 @@ struct DayView: View {
                         DisclosureGroup(
                             isExpanded: isExpanded,
                             content: {
-                                ForEach(set.movements) { movement in
+                                ForEach(Array(set.movements.enumerated()), id: \.element.id) { index, movement in
                                     HStack {
                                         Text(movement.name)
                                         Spacer()
@@ -126,6 +131,22 @@ struct DayView: View {
                                         }
                                     }
                                     .padding(.vertical, 4)
+                                    .contentShape(Rectangle()) // make full row tappable
+                                    .onTapGesture {
+                                        if let tappedSetIndex = movementSets.firstIndex(where: { $0.id == set.id }) {
+                                            currentSetIndex = tappedSetIndex
+                                            currentMovementIndex = index
+                                            isInPause = false
+                                            isPlaying = true
+
+                                            // ⏱ Set correct time for the new movement
+                                            if let newSet = currentSet {
+                                                timeRemaining = newSet.duration
+                                            }
+
+                                            startTimer()
+                                        }
+                                    }
                                 }
                             },
                             label: {
@@ -150,10 +171,7 @@ struct DayView: View {
     // MARK: - Timer Logic
 
     func startTimer() {
-        stopTimer()
-        if let set = currentSet {
-            timeRemaining = isInPause ? set.pauseBetween : set.duration
-        }
+        stopTimer() // always reset the old timer
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if timeRemaining > 1 {
@@ -164,7 +182,6 @@ struct DayView: View {
                 }
 
             } else {
-                // Skip displaying 0
                 if !isInPause {
                     doubleBeep()
                 }
@@ -190,8 +207,6 @@ struct DayView: View {
         if isInPause {
             // Pause just ended → begin movement
             isInPause = false
-
-            // Play start double beep
             doubleBeep()
 
             if currentMovementIndex + 1 < set.movements.count {
@@ -206,18 +221,25 @@ struct DayView: View {
                     currentMovementIndex = 0
                 }
             }
-
         } else {
             // Finished movement → begin pause
             isInPause = true
         }
 
+        // If we’ve gone past the last set, stop playback
         if currentSetIndex >= movementSets.count {
             isPlaying = false
-        } else {
-            startTimer()
+            return
         }
+
+        // Set the new timeRemaining properly
+        if let nextSet = currentSet {
+            timeRemaining = isInPause ? nextSet.pauseBetween : nextSet.duration
+        }
+
+        startTimer()
     }
+
 
 
     // MARK: - Sounds
