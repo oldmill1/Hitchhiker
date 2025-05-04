@@ -19,15 +19,20 @@ struct DayView: View {
                     .background(isPlaying ? Color.red : Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(8)
-                    .padding([.horizontal, .top])
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 12) // 👈 extra bottom space
             }
 
+
             // Album Art Placeholder (Black Square)
-            Rectangle()
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black)
-                .aspectRatio(1, contentMode: .fit) // ensures it's square
+                .aspectRatio(1, contentMode: .fit)
                 .frame(maxWidth: .infinity)
+                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4) // 👈 subtle shadow
                 .padding(.top, 8)
+
 
             // Centered Label
             Text("Movement Info")
