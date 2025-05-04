@@ -11,21 +11,22 @@ struct DayView: View {
 
     var body: some View {
         ZStack {
+            // Sleek retro gradient background
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(white: 0.3), // dark gray
-                    Color(white: 0.5), // mid gray
-                    Color(white: 0.4)  // soft transition
+                    Color(white: 0.3),
+                    Color(white: 0.5),
+                    Color(white: 0.4)
                 ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
 
-
             VStack(spacing: 0) {
                 // Play/Pause Button
                 Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred() // Haptic!
                     isPlaying.toggle()
 
                     if isPlaying {
@@ -38,7 +39,7 @@ struct DayView: View {
                         stopTimer()
                     }
                 }) {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill") // ▶ or ❚❚
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 28, weight: .bold))
                         .frame(width: 64, height: 64)
                         .background(
@@ -60,8 +61,7 @@ struct DayView: View {
                 }
                 .padding(.top, 16)
 
-
-                // Album Art Placeholder
+                // Album Art Placeholder with Bevel
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.systemGray5))
                     .aspectRatio(1, contentMode: .fit)
@@ -77,17 +77,20 @@ struct DayView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 8)
 
-                // Countdown Timer
+                // Countdown Timer with LCD style font
                 Text("\(timeRemaining)")
-                    .font(.system(size: 72, weight: .light))
+                    .font(.system(size: 72, weight: .light, design: .monospaced)) // ← LCD style
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
 
-                // Movement List
+                // Movement List with white section header
                 List {
-                    Section(header: Text(day.capitalized).font(.largeTitle)) {
+                    Section(header: Text(day.capitalized)
+                        .font(.largeTitle)
+                        .foregroundColor(.white) // white header for contrast
+                    ) {
                         ForEach(movements.indices, id: \.self) { index in
                             HStack {
                                 Text(movements[index].name)
@@ -101,10 +104,9 @@ struct DayView: View {
                         }
                     }
                 }
-                .scrollContentBackground(.hidden) // 👈 hides list background
-                .background(Color.clear)          // 👈 makes sure background is transparent
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
                 .listStyle(.insetGrouped)
-
             }
         }
     }
