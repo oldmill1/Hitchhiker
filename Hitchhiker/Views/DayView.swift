@@ -57,12 +57,22 @@ struct DayView: View {
                     .padding(.bottom, 4)
 
                 // Timer label
-                Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
-                    .font(.system(size: 28, weight: .medium, design: .monospaced))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 16)
+                if timeRemaining > 0 {
+                    Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
+                        .font(.system(size: 28, weight: .medium, design: .monospaced))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 16)
+                } else {
+                    Text("Ready?")
+                        .font(.system(size: 28, weight: .medium, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.7))
+                        .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 16)
+                }
+
                 
                 // Play/Pause Button
                 Button(action: {
