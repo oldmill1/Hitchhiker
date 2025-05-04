@@ -1,5 +1,3 @@
-// HomepageView.swift
-
 import SwiftUI
 
 struct HomepageView: View {
@@ -14,7 +12,7 @@ struct HomepageView: View {
                 NavigationLink(
                     destination: DayView(
                         day: day,
-                        movements: day == "Monday" ? MovementData.mondayMovements : []
+                        movementSets: day == "Monday" ? MovementData.mondaySets : []
                     )
                 ) {
                     Text(day)

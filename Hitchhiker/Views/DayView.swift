@@ -2,16 +2,28 @@ import SwiftUI
 
 struct DayView: View {
     let day: String
-    let movements: [Movement]
+    let movementSets: [MovementSet]
 
     @State private var isPlaying = false
-    @State private var currentMovementIndex: Int? = nil
+    @State private var currentSetIndex: Int = 0
+    @State private var currentMovementIndex: Int = 0
+    @State private var currentSetRepeat: Int = 1
+    @State private var isInPause: Bool = false
     @State private var timeRemaining: Int = 30
     @State private var timer: Timer? = nil
 
+    var currentSet: MovementSet? {
+        guard currentSetIndex < movementSets.count else { return nil }
+        return movementSets[currentSetIndex]
+    }
+
+    var currentMovement: Movement? {
+        guard let set = currentSet, currentMovementIndex < set.movements.count else { return nil }
+        return set.movements[currentMovementIndex]
+    }
+
     var body: some View {
         ZStack {
-            // Sleek retro gradient background
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(white: 0.3),
@@ -26,14 +38,10 @@ struct DayView: View {
             VStack(spacing: 0) {
                 // Play/Pause Button
                 Button(action: {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred() // Haptic!
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     isPlaying.toggle()
 
                     if isPlaying {
-                        if currentMovementIndex == nil {
-                            currentMovementIndex = 0
-                            timeRemaining = 30
-                        }
                         startTimer()
                     } else {
                         stopTimer()
@@ -61,7 +69,7 @@ struct DayView: View {
                 }
                 .padding(.top, 16)
 
-                // Album Art Placeholder with Bevel
+                // Album Art Placeholder
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.systemGray5))
                     .aspectRatio(1, contentMode: .fit)
@@ -70,35 +78,34 @@ struct DayView: View {
                     .padding(.top, 8)
 
                 // Current Movement Label
-                Text(currentMovementIndex != nil ? movements[currentMovementIndex!].name : "Movement Info")
+                Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
                     .font(.title2)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 4)
 
-                // Countdown Timer with LCD style font
-                Text("\(timeRemaining)")
-                    .font(.system(size: 72, weight: .light, design: .monospaced)) // ← LCD style
+                // Phase Label (Move / Pause)
+                Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
+                    .font(.system(size: 28, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
 
-                // Movement List with white section header
+                // Movement List grouped by Set
                 List {
-                    Section(header: Text(day.capitalized)
-                        .font(.largeTitle)
-                        .foregroundColor(.white) // white header for contrast
-                    ) {
-                        ForEach(movements.indices, id: \.self) { index in
-                            HStack {
-                                Text(movements[index].name)
-                                Spacer()
-                                if currentMovementIndex == index {
-                                    Circle()
-                                        .fill(Color.green)
-                                        .frame(width: 10, height: 10)
+                    ForEach(movementSets) { set in
+                        Section(header: Text(set.name).font(.title2).foregroundColor(.white)) {
+                            ForEach(set.movements) { movement in
+                                HStack {
+                                    Text(movement.name)
+                                    Spacer()
+                                    if movement == currentMovement {
+                                        Circle()
+                                            .fill(Color.green)
+                                            .frame(width: 10, height: 10)
+                                    }
                                 }
                             }
                         }
@@ -115,11 +122,15 @@ struct DayView: View {
 
     func startTimer() {
         stopTimer()
+        if let set = currentSet {
+            timeRemaining = isInPause ? set.pauseBetween : set.duration
+        }
+
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if timeRemaining > 0 {
                 timeRemaining -= 1
             } else {
-                advanceToNextMovement()
+                advance()
             }
         }
     }
@@ -129,24 +140,47 @@ struct DayView: View {
         timer = nil
     }
 
-    func advanceToNextMovement() {
-        guard let index = currentMovementIndex else { return }
+    func advance() {
+        stopTimer()
 
-        let nextIndex = index + 1
-        if nextIndex < movements.count {
-            currentMovementIndex = nextIndex
-            timeRemaining = 30
-        } else {
-            stopTimer()
+        guard let set = currentSet else {
             isPlaying = false
-            currentMovementIndex = nil
+            return
+        }
+
+        if isInPause {
+            // Pause is done → move to next movement or set
+            isInPause = false
+
+            if currentMovementIndex + 1 < set.movements.count {
+                currentMovementIndex += 1
+            } else {
+                if currentSetRepeat < set.repeatCount {
+                    currentSetRepeat += 1
+                    currentMovementIndex = 0
+                } else {
+                    currentSetIndex += 1
+                    currentSetRepeat = 1
+                    currentMovementIndex = 0
+                }
+            }
+
+        } else {
+            // Movement is done → enter pause
+            isInPause = true
+        }
+
+        if currentSetIndex >= movementSets.count {
+            isPlaying = false
+        } else {
+            startTimer()
         }
     }
 }
 
 #Preview {
     NavigationView {
-        DayView(day: "Monday", movements: MovementData.mondayMovements)
+        DayView(day: "Monday", movementSets: MovementData.mondaySets)
     }
 }
 
