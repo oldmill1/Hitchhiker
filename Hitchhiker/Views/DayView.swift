@@ -27,156 +27,157 @@ struct DayView: View {
     }
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(white: 0.3),
-                    Color(white: 0.5),
-                    Color(white: 0.4)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+        
+        VStack(spacing: 0) {
+            // Album Art Placeholder
+            Image("headTurnLeftRight")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .clipped()
+                .padding(.top, 61)
+                .offset(x: -10)
+                .ignoresSafeArea(edges: .top)
 
-            VStack(spacing: 0) {
-                // Album Art Placeholder
-                Image("headTurnLeftRight")
-                    .resizable()
-                    .aspectRatio(1, contentMode: .fit)
-                    .frame(maxWidth: .infinity)
-                    .cornerRadius(12)
-                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
-                    .padding(.top, 8)
 
-                // Movement label
-                Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 4)
+            // Movement Label
+            Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
+                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .background(Color.white.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+                .padding(.bottom, 8)
 
-                // Timer label
+            // Timer Label
+            Group {
                 if timeRemaining > 0 {
                     Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
-                        .font(.system(size: 28, weight: .medium, design: .monospaced))
+                        .font(.system(size: 32, weight: .bold, design: .monospaced))
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 16)
                 } else {
                     Text("Ready?")
-                        .font(.system(size: 28, weight: .medium, design: .monospaced))
+                        .font(.system(size: 32, weight: .bold, design: .monospaced))
                         .foregroundColor(.white.opacity(0.7))
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 16)
                 }
-
-                
-                // Play/Pause Button
-                Button(action: {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    isPlaying.toggle()
-
-                    if isPlaying {
-                        // If it's the first time starting, initialize the timer properly
-                        if timeRemaining == 0, let set = currentSet {
-                            timeRemaining = isInPause ? set.pauseBetween : set.duration
-                        }
-                        startTimer()
-                    } else {
-                        stopTimer()
-                    }
-
-                }) {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                        .font(.system(size: 28, weight: .bold))
-                        .frame(width: 64, height: 64)
-                        .background(
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [Color.gray.opacity(0.6), Color.black.opacity(0.8)]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                        )
-                        .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
-                        .foregroundColor(.white)
-                }
-                .padding(.top, 16)
-
-                // Movement List
-                List {
-                    ForEach(movementSets) { set in
-                        // binding that tells DisclosureGroup whether this set is expanded
-                        let isExpanded = Binding<Bool>(
-                            get: { expandedSections.contains(set.id) },
-                            set: { newValue in
-                                if newValue {
-                                    expandedSections.insert(set.id)
-                                } else {
-                                    expandedSections.remove(set.id)
-                                }
-                            }
-                        )
-
-                        DisclosureGroup(
-                            isExpanded: isExpanded,
-                            content: {
-                                ForEach(Array(set.movements.enumerated()), id: \.element.id) { index, movement in
-                                    HStack {
-                                        Text(movement.name)
-                                        Spacer()
-                                        if movement == currentMovement {
-                                            Circle()
-                                                .fill(Color.green)
-                                                .frame(width: 10, height: 10)
-                                        }
-                                    }
-                                    .padding(.vertical, 4)
-                                    .contentShape(Rectangle()) // make full row tappable
-                                    .onTapGesture {
-                                        if let tappedSetIndex = movementSets.firstIndex(where: { $0.id == set.id }) {
-                                            currentSetIndex = tappedSetIndex
-                                            currentMovementIndex = index
-                                            isInPause = false
-                                            isPlaying = true
-
-                                            // ⏱ Set correct time for the new movement
-                                            if let newSet = currentSet {
-                                                timeRemaining = newSet.duration
-                                            }
-
-                                            startTimer()
-                                        }
-                                    }
-                                }
-                            },
-                            label: {
-                                Text(set.name)
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-
-                                .contentShape(Rectangle())  // so the whole row is tappable
-                            }
-                        )
-                        .accentColor(.white)     // arrow & text
-                        .padding(.vertical, 4)
-                    }
-                }
-                .scrollContentBackground(.hidden)
-                .background(Color.clear)
-                .listStyle(.insetGrouped)
             }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 20)
+            .background(Color.white.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            .padding(.bottom, 16)
+
+            // Play/Pause Button
+            Button(action: {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                isPlaying.toggle()
+
+                if isPlaying {
+                    // If it's the first time starting, initialize the timer properly
+                    if timeRemaining == 0, let set = currentSet {
+                        timeRemaining = isInPause ? set.pauseBetween : set.duration
+                    }
+                    startTimer()
+                } else {
+                    stopTimer()
+                }
+
+            }) {
+                Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                    .font(.system(size: 28, weight: .bold))
+                    .frame(width: 64, height: 64)
+                    .background(
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.gray.opacity(0.6), Color.black.opacity(0.8)]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
+                    .foregroundColor(.white)
+            }
+            .padding(.top, 16)
+
+            // Movement List
+            List {
+                ForEach(movementSets) { set in
+                    let isExpanded = Binding<Bool>(
+                        get: { expandedSections.contains(set.id) },
+                        set: { newValue in
+                            if newValue {
+                                expandedSections.insert(set.id)
+                            } else {
+                                expandedSections.remove(set.id)
+                            }
+                        }
+                    )
+
+                    DisclosureGroup(
+                        isExpanded: isExpanded,
+                        content: {
+                            ForEach(Array(set.movements.enumerated()), id: \.element.id) { index, movement in
+                                HStack {
+                                    Text(movement.name)
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 19, weight: .medium, design: .rounded))
+
+                                    Spacer()
+
+                                    if movement == currentMovement {
+                                        Circle()
+                                            .fill(Color.green)
+                                            .frame(width: 10, height: 10)
+                                    }
+                                }
+                                .padding(.vertical, 4) // ⬅️ reduced from 6
+                                .padding(.horizontal, 8) // ⬅️ reduced from 12
+                                .background(Color.white.opacity(0.05))
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    if let tappedSetIndex = movementSets.firstIndex(where: { $0.id == set.id }) {
+                                        currentSetIndex = tappedSetIndex
+                                        currentMovementIndex = index
+                                        isInPause = false
+                                        isPlaying = true
+
+                                        if let newSet = currentSet {
+                                            timeRemaining = newSet.duration
+                                        }
+
+                                        startTimer()
+                                    }
+                                }
+                            }
+                        },
+                        label: {
+                            Text(set.name)
+                                .foregroundColor(.white)
+                                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(Color.white.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        }
+                    )
+                    .padding(.vertical, 8)
+                }
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
+
         }
+        
     }
 
     // MARK: - Timer Logic
