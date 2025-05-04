@@ -12,6 +12,9 @@ struct DayView: View {
     @State private var isInPause: Bool = false
     @State private var timeRemaining: Int = 30
     @State private var timer: Timer? = nil
+    
+    @State private var expandedSections: Set<MovementSet.ID> = []
+
 
     var currentSet: MovementSet? {
         guard currentSetIndex < movementSets.count else { return nil }
@@ -37,6 +40,30 @@ struct DayView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
+                // Album Art Placeholder
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray5))
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(maxWidth: .infinity)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+                    .padding(.top, 8)
+
+                // Movement label
+                Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 4)
+
+                // Timer label
+                Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
+                    .font(.system(size: 28, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 16)
+                
                 // Play/Pause Button
                 Button(action: {
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -70,46 +97,47 @@ struct DayView: View {
                 }
                 .padding(.top, 16)
 
-                // Album Art Placeholder
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray5))
-                    .aspectRatio(1, contentMode: .fit)
-                    .frame(maxWidth: .infinity)
-                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
-                    .padding(.top, 8)
-
-                // Movement label
-                Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 4)
-
-                // Timer label
-                Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
-                    .font(.system(size: 28, weight: .medium, design: .monospaced))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 16)
-
                 // Movement List
                 List {
                     ForEach(movementSets) { set in
-                        Section(header: Text(set.name).font(.title2).foregroundColor(.white)) {
-                            ForEach(set.movements) { movement in
-                                HStack {
-                                    Text(movement.name)
-                                    Spacer()
-                                    if movement == currentMovement {
-                                        Circle()
-                                            .fill(Color.green)
-                                            .frame(width: 10, height: 10)
-                                    }
+                        // binding that tells DisclosureGroup whether this set is expanded
+                        let isExpanded = Binding<Bool>(
+                            get: { expandedSections.contains(set.id) },
+                            set: { newValue in
+                                if newValue {
+                                    expandedSections.insert(set.id)
+                                } else {
+                                    expandedSections.remove(set.id)
                                 }
                             }
-                        }
+                        )
+
+                        DisclosureGroup(
+                            isExpanded: isExpanded,
+                            content: {
+                                ForEach(set.movements) { movement in
+                                    HStack {
+                                        Text(movement.name)
+                                        Spacer()
+                                        if movement == currentMovement {
+                                            Circle()
+                                                .fill(Color.green)
+                                                .frame(width: 10, height: 10)
+                                        }
+                                    }
+                                    .padding(.vertical, 4)
+                                }
+                            },
+                            label: {
+                                Text(set.name)
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+
+                                .contentShape(Rectangle())  // so the whole row is tappable
+                            }
+                        )
+                        .accentColor(.white)     // arrow & text
+                        .padding(.vertical, 4)
                     }
                 }
                 .scrollContentBackground(.hidden)
