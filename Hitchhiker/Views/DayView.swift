@@ -1,4 +1,5 @@
 import SwiftUI
+import AudioToolbox
 
 struct DayView: View {
     let day: String
@@ -77,7 +78,7 @@ struct DayView: View {
                     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
                     .padding(.top, 8)
 
-                // Current Movement Label
+                // Movement label
                 Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
                     .font(.title2)
                     .foregroundColor(.white)
@@ -85,7 +86,7 @@ struct DayView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 4)
 
-                // Phase Label (Move / Pause)
+                // Timer label
                 Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
                     .font(.system(size: 28, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
@@ -93,7 +94,7 @@ struct DayView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
 
-                // Movement List grouped by Set
+                // Movement List
                 List {
                     ForEach(movementSets) { set in
                         Section(header: Text(set.name).font(.title2).foregroundColor(.white)) {
@@ -129,7 +130,16 @@ struct DayView: View {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if timeRemaining > 0 {
                 timeRemaining -= 1
+
+                if !isInPause {
+                    if timeRemaining <= 5 && timeRemaining > 0 {
+                        beep()
+                    }
+                }
             } else {
+                if !isInPause {
+                    doubleBeep()
+                }
                 advance()
             }
         }
@@ -149,7 +159,7 @@ struct DayView: View {
         }
 
         if isInPause {
-            // Pause is done → move to next movement or set
+            // After pause, either next movement or repeat/set
             isInPause = false
 
             if currentMovementIndex + 1 < set.movements.count {
@@ -166,7 +176,7 @@ struct DayView: View {
             }
 
         } else {
-            // Movement is done → enter pause
+            // Finished movement → enter pause
             isInPause = true
         }
 
@@ -175,6 +185,16 @@ struct DayView: View {
         } else {
             startTimer()
         }
+    }
+
+    // MARK: - Sounds
+
+    func beep() {
+        AudioServicesPlaySystemSound(1052)
+    }
+
+    func doubleBeep() {
+        AudioServicesPlaySystemSound(1052)
     }
 }
 
