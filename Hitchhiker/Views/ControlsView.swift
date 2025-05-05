@@ -7,35 +7,27 @@ struct ControlsView: View {
     let isPlaying: Bool
     let onPlayPauseTapped: () -> Void
 
+    var backgroundColor: Color {
+        isInPause ? Color(red: 1.0, green: 0.85, blue: 0.85) : Color(red: 0.85, green: 1.0, blue: 0.85)
+    }
+
     var body: some View {
-        VStack(spacing: 16) {
-            // Movement Label
-            Text(isInPause ? "Now resting..." : currentMovement?.name ?? "Movement Info")
+        HStack(spacing: 0) {
+            // Timer block
+            Text("\(timeRemaining)")
+                .font(.system(size: 40, weight: .bold, design: .rounded))
+                .frame(width: 80, height: 80)
+                .background(backgroundColor)
+                .foregroundColor(.black)
+                .cornerRadius(12)
+
+            // Movement name block
+            Text(currentMovement?.name ?? "Movement Info")
                 .font(.system(size: 20, weight: .semibold, design: .rounded))
                 .foregroundColor(.primary)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .shadow(radius: 4, y: 2)
-
-            // Timer Label
-            Group {
-                if timeRemaining > 0 {
-                    Text(isInPause ? "Rest for \(timeRemaining)" : "Move for \(timeRemaining)")
-                        .font(.system(size: 32, weight: .bold, design: .monospaced))
-                        .foregroundColor(.primary)
-                } else {
-                    Text("Ready?")
-                        .font(.system(size: 32, weight: .bold, design: .monospaced))
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 20)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .shadow(radius: 4, y: 2)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
 
             // Play/Pause Button
             Button(action: {
@@ -43,16 +35,13 @@ struct ControlsView: View {
                 onPlayPauseTapped()
             }) {
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                    .font(.system(size: 28, weight: .bold))
-                    .frame(width: 64, height: 64)
+                    .font(.system(size: 24, weight: .bold))
+                    .frame(width: 48, height: 48)
                     .background(
                         Circle()
                             .fill(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color.gray.opacity(0.5),
-                                        Color.primary.opacity(0.3)
-                                    ]),
+                                    gradient: Gradient(colors: [Color.gray.opacity(0.6), Color.black.opacity(0.8)]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
@@ -60,12 +49,18 @@ struct ControlsView: View {
                     )
                     .overlay(
                         Circle()
-                            .stroke(Color.primary.opacity(0.2), lineWidth: 1)
+                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
                     )
-                    .shadow(radius: 4, y: 2)
-                    .foregroundColor(.primary)
+                    .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
+                    .foregroundColor(.white)
             }
+            .padding(.trailing, 12)
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color(.systemBackground).opacity(0.95))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(radius: 4)
         .padding(.bottom, 16)
     }
 }
@@ -78,7 +73,7 @@ struct ControlsView: View {
         isPlaying: false,
         onPlayPauseTapped: {}
     )
-    .padding()
-    .background(Color(.systemBackground))
     .preferredColorScheme(.light)
+    .padding()
 }
+

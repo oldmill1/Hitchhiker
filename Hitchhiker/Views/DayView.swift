@@ -15,7 +15,6 @@ struct DayView: View {
     
     @State private var expandedSections: Set<MovementSet.ID> = []
 
-
     var currentSet: MovementSet? {
         guard currentSetIndex < movementSets.count else { return nil }
         return movementSets[currentSetIndex]
