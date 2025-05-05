@@ -7,7 +7,7 @@ struct DisplayView: View {
             .aspectRatio(contentMode: .fill)
             .clipped()
             .padding(.top, 61)
-            .offset(x: -10)
+            .offset(x: -40)
             .ignoresSafeArea(edges: .top)
     }
 }
