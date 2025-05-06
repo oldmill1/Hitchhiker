@@ -37,7 +37,7 @@ struct DayView: View {
             }
             if hasStarted {
                 NowPlayingView()
-                    .padding(.top, -42)
+                    .padding(.top, 20)
             } else {
                 Button(action: {
                     hasStarted = true
@@ -67,7 +67,7 @@ struct DayView: View {
                         )
                         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
-                    .padding(.top, -42)
+                    .padding(.top, 20)
             }
 
             Spacer()

@@ -9,7 +9,7 @@ struct DisplayView: View {
             .aspectRatio(contentMode: .fill)
             .frame(height: 290)
             .clipped()
-            .ignoresSafeArea(edges: .top)
+//            .ignoresSafeArea(edges: .top)
     }
 }
 
