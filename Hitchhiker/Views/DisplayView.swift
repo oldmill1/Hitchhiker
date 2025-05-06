@@ -1,18 +1,20 @@
 import SwiftUI
 
 struct DisplayView: View {
+    let imageName: String
+
     var body: some View {
-        Image("headTurnLeftRight")
+        Image(imageName)
             .resizable()
-            .aspectRatio(contentMode: .fill) // use `.fill` to stretch width
+            .aspectRatio(contentMode: .fill)
             .frame(height: 290)
-            .clipped() // trims overflow to prevent distortion
+            .clipped()
             .ignoresSafeArea(edges: .top)
     }
 }
 
 #Preview {
-    DisplayView()
+    DisplayView(imageName: "headTurnLeftRight")
         .preferredColorScheme(.dark)
 }
 

@@ -28,8 +28,7 @@ struct DayView: View {
     var body: some View {
         
         VStack(spacing: 0) {
-            DisplayView()
-
+            DisplayView(imageName: "headTurnLeftRight")
             Spacer()
         }
         
