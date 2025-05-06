@@ -30,7 +30,11 @@ struct DayView: View {
     var body: some View {
         
         VStack(spacing: 0) {
-            DisplayView(imageName: "headTurnLeftRight")
+            if hasStarted {
+                DisplayView(imageName: "headTurnLeftRight")
+            } else {
+                DisplayView(imageName: "start")
+            }
             if hasStarted {
                 NowPlayingView()
                     .padding(.top, -42)
