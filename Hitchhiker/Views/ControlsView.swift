@@ -54,14 +54,7 @@ struct ControlsView: View {
                     .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
                     .foregroundColor(.white)
             }
-            .padding(.trailing, 12)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(.systemBackground).opacity(0.95))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .shadow(radius: 4)
-        .padding(.bottom, 16)
     }
 }
 

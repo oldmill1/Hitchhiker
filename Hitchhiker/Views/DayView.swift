@@ -29,6 +29,9 @@ struct DayView: View {
         
         VStack(spacing: 0) {
             DisplayView(imageName: "headTurnLeftRight")
+            Text("Hello world")
+                .padding(.horizontal, 20)
+                .padding(.top, -42)
             Spacer()
         }
         
