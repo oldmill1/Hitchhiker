@@ -30,11 +30,7 @@ struct DayView: View {
     var body: some View {
         
         VStack(spacing: 0) {
-            if hasStarted {
-                DisplayView(imageName: currentMovement?.image ?? "start")
-            } else {
-                DisplayView(imageName: "start")
-            }
+            DisplayView(imageName: hasStarted ? (currentMovement?.image ?? "start") : "start")
             if hasStarted {
                 NowPlayingView(
                     currentMovement: currentMovement,
