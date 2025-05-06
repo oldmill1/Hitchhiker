@@ -163,6 +163,7 @@ struct DayView: View {
 #Preview {
     NavigationView {
         DayView(day: "Monday", movementSets: MovementData.mondaySets)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
     }
 }
-

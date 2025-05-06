@@ -14,6 +14,8 @@ struct HomepageView: View {
                         day: day,
                         movementSets: day == "Monday" ? MovementData.mondaySets : []
                     )
+                    .navigationBarHidden(true)
+                    .navigationBarTitleDisplayMode(.inline)
                 ) {
                     Text(day)
                 }
