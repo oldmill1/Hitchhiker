@@ -46,13 +46,22 @@ struct DayView: View {
                     startTimer()
                 }) {
                     Text("Start Workout")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .padding(.horizontal, 32)
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .padding(.horizontal, 36)
                         .padding(.vertical, 14)
-                        .background(Color.green.opacity(0.8))
-                        .foregroundColor(.white)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.9), Color.green.opacity(0.5)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .foregroundColor(.black)
                         .clipShape(Capsule())
-                        .shadow(radius: 4)
+                        .overlay(
+                            Capsule().stroke(Color.primary.opacity(0.2), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
                 .padding(.top, -42)
             }
