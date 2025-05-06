@@ -12,6 +12,8 @@ struct DayView: View {
     @State private var isInPause: Bool = false
     @State private var timeRemaining: Int = 0
     @State private var timer: Timer? = nil
+    @State private var hasStarted: Bool = false
+
     
     @State private var expandedSections: Set<MovementSet.ID> = []
 
@@ -29,9 +31,32 @@ struct DayView: View {
         
         VStack(spacing: 0) {
             DisplayView(imageName: "headTurnLeftRight")
-            Text("Hello world")
-                .padding(.horizontal, 20)
+            if hasStarted {
+                NowPlayingView()
+                    .padding(.top, -42)
+            } else {
+                Button(action: {
+                    hasStarted = true
+                    isPlaying = true
+
+                    if timeRemaining == 0, let set = currentSet {
+                        timeRemaining = isInPause ? set.pauseBetween : set.duration
+                    }
+
+                    startTimer()
+                }) {
+                    Text("Start Workout")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 14)
+                        .background(Color.green.opacity(0.8))
+                        .foregroundColor(.white)
+                        .clipShape(Capsule())
+                        .shadow(radius: 4)
+                }
                 .padding(.top, -42)
+            }
+
             Spacer()
         }
         
