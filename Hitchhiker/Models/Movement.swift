@@ -3,9 +3,17 @@
 import Foundation
 
 struct Movement: Identifiable, Hashable {
-    let id = UUID()
+    let id: UUID
     let name: String
+    let image: String?
+
+    init(name: String, image: String? = nil) {
+        self.id = UUID()
+        self.name = name
+        self.image = image
+    }
 }
+
 
 struct MovementSet: Identifiable, Hashable {
     let id = UUID()

@@ -31,12 +31,15 @@ struct DayView: View {
         
         VStack(spacing: 0) {
             if hasStarted {
-                DisplayView(imageName: "headTurnLeftRight")
+                DisplayView(imageName: currentMovement?.image ?? "start")
             } else {
                 DisplayView(imageName: "start")
             }
             if hasStarted {
-                NowPlayingView()
+                NowPlayingView(
+                    currentMovement: currentMovement,
+                    timeRemaining: timeRemaining
+                )
                     .padding(.top, 20)
             } else {
                 Button(action: {

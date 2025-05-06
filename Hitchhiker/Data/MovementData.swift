@@ -17,11 +17,11 @@ struct MovementData {
     static let special = Movement(name: "Special")
 
     static let warmupMovements = [
-        Movement(name: "Head Turns (Up Down)"),
-        Movement(name: "Head Turns (Left Right)"),
-        Movement(name: "Foot Circles (Left Foot)"),
-        Movement(name: "Foot Circles (Right Foot)"),
-        Movement(name: "Shoulder Rotations"),
+        Movement(name: "Head Turns (Up Down)", image: "headTurnLeftRight"),
+        Movement(name: "Head Turns (Left Right)" , image: "headTurnLeftRight"),
+        Movement(name: "Foot Circles (Left Foot)", image: "footCircles"),
+        Movement(name: "Foot Circles (Right Foot)", image: "footCircles"),
+        Movement(name: "Shoulder Rotations", image: "shoulderRotations"),
         Movement(name: "Lateral Side Bends"),
         Movement(name: "Prisoner Squats"),
         Movement(name: "Reverse Lunges"),

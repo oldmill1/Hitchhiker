@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct NowPlayingView: View {
+    let currentMovement: Movement?
+    let timeRemaining: Int
+    
     var body: some View {
         HStack(spacing: 0) {
             // Left side: control buttons
@@ -24,9 +27,9 @@ struct NowPlayingView: View {
 
             // Right side: capsule text
             VStack(spacing: 4) {
-                Text("Apple Music")
+                Text(currentMovement?.name ?? "Movement Info")
                     .font(.headline)
-                Text("LIVE")
+                Text("\(timeRemaining)")
                     .font(.caption)
                     .bold()
                     .foregroundColor(Color.primary)
@@ -87,6 +90,9 @@ struct AquaButtonStyle: ButtonStyle {
 // MARK: - Preview
 
 #Preview {
-    NowPlayingView()
+    NowPlayingView(
+        currentMovement: Movement(name: "Hitchhiker's Guide"),
+        timeRemaining: 45,
+    )
         .preferredColorScheme(.dark) // Try both .light and .dark!
 }
