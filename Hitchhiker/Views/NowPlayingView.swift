@@ -3,7 +3,9 @@ import SwiftUI
 struct NowPlayingView: View {
     let currentMovement: Movement?
     let timeRemaining: Int
-    
+    let isPlaying: Bool
+    let onPlayPauseTapped: () -> Void
+
     var body: some View {
         HStack(spacing: 0) {
             // Left side: control buttons
@@ -13,8 +15,10 @@ struct NowPlayingView: View {
                 }
                 .buttonStyle(AquaButtonStyle())
 
-                Button(action: {}) {
-                    Image(systemName: "stop.fill")
+                Button(action: {
+                    onPlayPauseTapped()
+                }) {
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                 }
                 .buttonStyle(AquaButtonStyle())
 
@@ -91,8 +95,12 @@ struct AquaButtonStyle: ButtonStyle {
 
 #Preview {
     NowPlayingView(
-        currentMovement: Movement(name: "Hitchhiker's Guide"),
+        currentMovement: Movement(name: "Hitchhiker's Guide", image: "headTurnLeftRight"),
         timeRemaining: 45,
+        isPlaying: false,
+        onPlayPauseTapped: {
+            print("Play/Pause tapped (preview)")
+        }
     )
-        .preferredColorScheme(.dark) // Try both .light and .dark!
+    .preferredColorScheme(.dark) // Try .light or .dark
 }

@@ -34,7 +34,20 @@ struct DayView: View {
             if hasStarted {
                 NowPlayingView(
                     currentMovement: currentMovement,
-                    timeRemaining: timeRemaining
+                    timeRemaining: timeRemaining,
+                    isPlaying: isPlaying,
+                    onPlayPauseTapped: {
+                        isPlaying.toggle()
+
+                        if isPlaying {
+                            if timeRemaining == 0, let set = currentSet {
+                                timeRemaining = isInPause ? set.pauseBetween : set.duration
+                            }
+                            startTimer()
+                        } else {
+                            stopTimer()
+                        }
+                    }
                 )
                     .padding(.top, 20)
             } else {
