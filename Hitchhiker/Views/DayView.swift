@@ -36,6 +36,7 @@ struct DayView: View {
                     currentMovement: currentMovement,
                     timeRemaining: timeRemaining,
                     isPlaying: isPlaying,
+                    isInPause: isInPause,
                     onPlayPauseTapped: {
                         isPlaying.toggle()
 

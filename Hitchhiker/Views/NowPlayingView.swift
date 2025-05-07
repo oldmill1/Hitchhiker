@@ -4,6 +4,7 @@ struct NowPlayingView: View {
     let currentMovement: Movement?
     let timeRemaining: Int
     let isPlaying: Bool
+    let isInPause: Bool
     let onPlayPauseTapped: () -> Void
 
     var body: some View {
@@ -31,12 +32,10 @@ struct NowPlayingView: View {
 
             // Right side: capsule text
             VStack(spacing: 4) {
-                Text(currentMovement?.name ?? "Movement Info")
-                    .font(.headline)
-                Text("\(timeRemaining)")
-                    .font(.caption)
-                    .bold()
-                    .foregroundColor(Color.primary)
+                Text(isInPause ? "Rest" : (currentMovement?.name ?? "Movement Info"))
+                    .font(.title2)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
             }
             .padding()
             .frame(maxWidth: .infinity)
@@ -98,9 +97,10 @@ struct AquaButtonStyle: ButtonStyle {
         currentMovement: Movement(name: "Hitchhiker's Guide", image: "headTurnLeftRight"),
         timeRemaining: 45,
         isPlaying: false,
+        isInPause: false,
         onPlayPauseTapped: {
             print("Play/Pause tapped (preview)")
-        }
+        },
     )
     .preferredColorScheme(.dark) // Try .light or .dark
 }
