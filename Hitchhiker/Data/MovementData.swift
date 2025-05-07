@@ -53,14 +53,14 @@ struct MovementData {
             name: "Warmup",
             repeatCount: 1,
             duration: 20,
-            pauseBetween: 5,
+            restTimer: 5,
             movements: warmupMovements
         ),
         MovementSet(
             name: "Workout",
             repeatCount: 3,
             duration: 45,
-            pauseBetween: 5,
+            restTimer: 5,
             movements: workoutMovements
         )
     ]

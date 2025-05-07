@@ -19,7 +19,7 @@ struct MovementSet: Identifiable, Hashable {
     let id = UUID()
     let name: String
     let repeatCount: Int
-    let duration: Int          // seconds per movement
-    let pauseBetween: Int      // seconds between movements
+    let duration: Int           // seconds per movement
+    let restTimer: Int          // seconds of rest between movements
     let movements: [Movement]
 }

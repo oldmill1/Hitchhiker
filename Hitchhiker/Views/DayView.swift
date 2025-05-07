@@ -9,12 +9,11 @@ struct DayView: View {
     @State private var currentSetIndex: Int = 0
     @State private var currentMovementIndex: Int = 0
     @State private var currentSetRepeat: Int = 1
-    @State private var isInPause: Bool = false
+    @State private var isInRest: Bool = false
     @State private var timeRemaining: Int = 0
     @State private var timer: Timer? = nil
     @State private var hasStarted: Bool = false
 
-    
     @State private var expandedSections: Set<MovementSet.ID> = []
 
     var currentSet: MovementSet? {
@@ -28,21 +27,21 @@ struct DayView: View {
     }
 
     var body: some View {
-        
         VStack(spacing: 0) {
             DisplayView(imageName: hasStarted ? (currentMovement?.image ?? "start") : "start")
+
             if hasStarted {
                 NowPlayingView(
                     currentMovement: currentMovement,
                     timeRemaining: timeRemaining,
                     isPlaying: isPlaying,
-                    isInPause: isInPause,
+                    isInRest: isInRest,
                     onPlayPauseTapped: {
                         isPlaying.toggle()
 
                         if isPlaying {
                             if timeRemaining == 0, let set = currentSet {
-                                timeRemaining = isInPause ? set.pauseBetween : set.duration
+                                timeRemaining = isInRest ? set.restTimer : set.duration
                             }
                             startTimer()
                         } else {
@@ -50,14 +49,14 @@ struct DayView: View {
                         }
                     }
                 )
-                    .padding(.top, 20)
+                .padding(.top, 20)
             } else {
                 Button(action: {
                     hasStarted = true
                     isPlaying = true
 
                     if timeRemaining == 0, let set = currentSet {
-                        timeRemaining = isInPause ? set.pauseBetween : set.duration
+                        timeRemaining = isInRest ? set.restTimer : set.duration
                     }
 
                     startTimer()
@@ -80,36 +79,34 @@ struct DayView: View {
                         )
                         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
-                    .padding(.top, 20)
+                .padding(.top, 20)
             }
 
             Spacer()
         }
-        
     }
 
     // MARK: - Timer Logic
 
     func startTimer() {
-        stopTimer() // always reset the old timer
+        stopTimer()
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if timeRemaining > 1 {
                 timeRemaining -= 1
 
-                if !isInPause && timeRemaining <= 5 {
+                if !isInRest && timeRemaining <= 5 {
                     beep()
                 }
 
             } else {
-                if !isInPause {
+                if !isInRest {
                     doubleBeep()
                 }
                 advance()
             }
         }
     }
-
 
     func stopTimer() {
         timer?.invalidate()
@@ -124,9 +121,9 @@ struct DayView: View {
             return
         }
 
-        if isInPause {
-            // Pause just ended → begin movement
-            isInPause = false
+        if isInRest {
+            // Rest just ended → begin movement
+            isInRest = false
             doubleBeep()
 
             if currentMovementIndex + 1 < set.movements.count {
@@ -142,25 +139,21 @@ struct DayView: View {
                 }
             }
         } else {
-            // Finished movement → begin pause
-            isInPause = true
+            // Finished movement → begin rest
+            isInRest = true
         }
 
-        // If we’ve gone past the last set, stop playback
         if currentSetIndex >= movementSets.count {
             isPlaying = false
             return
         }
 
-        // Set the new timeRemaining properly
         if let nextSet = currentSet {
-            timeRemaining = isInPause ? nextSet.pauseBetween : nextSet.duration
+            timeRemaining = isInRest ? nextSet.restTimer : nextSet.duration
         }
 
         startTimer()
     }
-
-
 
     // MARK: - Sounds
 
@@ -174,7 +167,6 @@ struct DayView: View {
             AudioServicesPlaySystemSound(1052)
         }
     }
-
 }
 
 #Preview {

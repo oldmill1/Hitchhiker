@@ -4,7 +4,7 @@ struct NowPlayingView: View {
     let currentMovement: Movement?
     let timeRemaining: Int
     let isPlaying: Bool
-    let isInPause: Bool
+    let isInRest: Bool
     let onPlayPauseTapped: () -> Void
 
     var body: some View {
@@ -32,18 +32,16 @@ struct NowPlayingView: View {
 
             // Right side: capsule text
             VStack(spacing: 4) {
-                Text(isInPause ? "Rest" : formatTime(seconds: timeRemaining))
+                Text(isInRest ? "Rest" : formatTime(seconds: timeRemaining))
                     .font(.system(size: 29, weight: .bold, design: .rounded))
-                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
             }
             .padding()
             .frame(maxWidth: .infinity)
             .background(
                 LinearGradient(
-                    colors: [
-                        Color.white.opacity(0.9),
-                        Color.green.opacity(0.4)
-                    ],
+                    colors: [Color.white.opacity(0.9), Color.green.opacity(0.4)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -58,10 +56,7 @@ struct NowPlayingView: View {
             RoundedRectangle(cornerRadius: 40)
                 .fill(
                     LinearGradient(
-                        colors: [
-                            Color.gray.opacity(0.2),
-                            Color.gray.opacity(0.05)
-                        ],
+                        colors: [Color.gray.opacity(0.2), Color.gray.opacity(0.05)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -77,6 +72,7 @@ func formatTime(seconds: Int) -> String {
     let secs = seconds % 60
     return String(format: "%d:%02d", minutes, secs)
 }
+
 
 // MARK: - Aqua-style Button
 
@@ -102,10 +98,10 @@ struct AquaButtonStyle: ButtonStyle {
         currentMovement: Movement(name: "Hitchhiker's Guide", image: "headTurnLeftRight"),
         timeRemaining: 45,
         isPlaying: false,
-        isInPause: false,
+        isInRest: false,
         onPlayPauseTapped: {
             print("Play/Pause tapped (preview)")
-        },
+        }
     )
-    .preferredColorScheme(.dark) // Try .light or .dark
+    .preferredColorScheme(.dark)
 }
