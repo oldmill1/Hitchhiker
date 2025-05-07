@@ -32,10 +32,8 @@ struct NowPlayingView: View {
 
             // Right side: capsule text
             VStack(spacing: 4) {
-                Text(isInPause ? "Rest" : (currentMovement?.name ?? "Movement Info"))
-                    .font(.title2)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
+                Text(isInPause ? "Rest" : formatTime(seconds: timeRemaining))
+                    .font(.system(size: 29, weight: .bold, design: .rounded))
             }
             .padding()
             .frame(maxWidth: .infinity)
@@ -71,6 +69,12 @@ struct NowPlayingView: View {
         )
         .padding(.horizontal)
     }
+}
+
+func formatTime(seconds: Int) -> String {
+    let minutes = seconds / 60
+    let secs = seconds % 60
+    return String(format: "%d:%02d", minutes, secs)
 }
 
 // MARK: - Aqua-style Button
