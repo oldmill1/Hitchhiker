@@ -34,6 +34,7 @@ struct NowPlayingView: View {
             VStack(spacing: 4) {
                 Text(isInPause ? "Rest" : formatTime(seconds: timeRemaining))
                     .font(.system(size: 29, weight: .bold, design: .rounded))
+                    .foregroundColor(.black)
             }
             .padding()
             .frame(maxWidth: .infinity)
