@@ -50,6 +50,38 @@ struct DayView: View {
                     }
                 )
                 .padding(.top, 20)
+                
+                if isInRest, let next = nextMovement {
+                    VStack(spacing: 6) {
+                        Text("Next Movement")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundColor(.gray)
+                            .textCase(.uppercase)
+                            .kerning(1.2)
+
+                        Text(next.name)
+                            .font(.system(size: 36, weight: .heavy, design: .rounded))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(Color.primary)
+                            .padding(.horizontal)
+                    }
+                    .padding(.top, 30)
+                } else if let current = currentMovement {
+                    VStack(spacing: 6) {
+                        Text("Current Movement")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundColor(.gray)
+                            .textCase(.uppercase)
+                            .kerning(1.2)
+
+                        Text(current.name)
+                            .font(.system(size: 36, weight: .heavy, design: .rounded))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(Color.primary)
+                            .padding(.horizontal)
+                    }
+                    .padding(.top, 30)
+                }
             } else {
                 Button(action: {
                     hasStarted = true
@@ -153,6 +185,20 @@ struct DayView: View {
         }
 
         startTimer()
+    }
+    
+    var nextMovement: Movement? {
+        guard let set = currentSet else { return nil }
+
+        if currentMovementIndex + 1 < set.movements.count {
+            return set.movements[currentMovementIndex + 1]
+        } else if currentSetRepeat < set.repeatCount {
+            return set.movements.first
+        } else if currentSetIndex + 1 < movementSets.count {
+            return movementSets[currentSetIndex + 1].movements.first
+        }
+
+        return nil
     }
 
     // MARK: - Sounds

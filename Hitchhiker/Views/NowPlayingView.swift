@@ -32,7 +32,7 @@ struct NowPlayingView: View {
 
             // Right side: capsule text
             VStack(spacing: 4) {
-                Text(isInRest ? "Rest" : formatTime(seconds: timeRemaining))
+                Text(isInRest ? "Rest: \(timeRemaining)" : formatTime(seconds: timeRemaining))
                     .font(.system(size: 29, weight: .bold, design: .rounded))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
